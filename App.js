@@ -1,21 +1,38 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+import { NavigationContainer } from "@react-navigation/native";
+import DrawerNav from './routes/DrawerNav';
+import store from './redux/store';
+import { Provider } from "react-redux";
+import { sqliteInit } from './database/db';
+import Login from './screens/Login';
+import ProfilInfos from './screens/ProfilInfos';
+import GeoLocation from './screens/GeoLocation';
+
+// Initialiser le BDD SQLIte
+sqliteInit().then(() => {
+  console.log('SQLite initialisée');
+}).catch( err => {
+  console.log(err)
+})
+
+const Stack = createStackNavigator();
 
 export default function App() {
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{ headerShown: false}}
+        >
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="ProfilInfos" component={ProfilInfos} />
+          <Stack.Screen name="GeoLocation" component={GeoLocation} />
+          <Stack.Screen name="Home" component={DrawerNav} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
